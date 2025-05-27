@@ -11,13 +11,15 @@ def save_data():
     email = email_entry.get()
     password = password_entry.get()
 
-    is_confirmed = messagebox.askokcancel(title=website, message=f"Email: {email}\nPassword: {password}\n\nAdd these login info?")
-
-    if is_confirmed:
-        with open("web_data.txt", "a") as data:
-            data.write(f"{website} | {email} | {password}\n")
-            web_entry.delete(0, tkinter.END)
-            password_entry.delete(0, tkinter.END)
+    if website == "" or password == "":
+        messagebox.showerror(title="Empy Fields", message="Please check for empty fields")
+    else:
+        is_confirmed = messagebox.askokcancel(title=website, message=f"Email: {email}\nPassword: {password}\n\nAdd these login info?")
+        if is_confirmed:
+            with open("web_data.txt", "a") as data:
+                data.write(f"{website} | {email} | {password}\n")
+                web_entry.delete(0, tkinter.END)
+                password_entry.delete(0, tkinter.END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #

@@ -11,8 +11,29 @@ LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
            'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 NUMBERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 SYMBOLS = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
-# ---------------------------- PASSWORD GENERATOR ------------------------------- #
+# ------------------------------ SEARCH FUNCTION -------------------------------- #
 
+
+def search_web_field():
+    website = web_entry.get()
+    if len(website) == 0:
+        messagebox.showwarning(title="Alert", message="Website field is empty")
+    else:
+            try:
+                with open("web_data.json", "r") as data_file:
+                    data = json.load(data_file)
+            except FileNotFoundError:
+                messagebox.showerror(title="Missing JSON File", message="JSON data file not found")
+            else:
+                    if website in data:
+                        user = data[website]["email"]
+                        user_pass = data[website]["password"]
+                        messagebox.showinfo(title=f"{website}'s Login", message=f"Login: {user}\nPass: {user_pass}")
+                        print(data[website])
+                    else:
+                        messagebox.showwarning(title="Alert", message=f"{website} doesn't exist")
+
+# ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def random_pass_generate():
     password_entry.delete(0, tkinter.END)
@@ -41,15 +62,30 @@ def save_data():
         }
     }
 
-    if website == "" or password == "":
+    if len(website) == 0 or len(password) == 0:
         messagebox.showerror(title="Empy Fields", message="Please check for empty fields")
     else:
         # is_confirmed = messagebox.askokcancel(title=website, message=f"Email: {email}\nPassword: {password}\n\nAdd these login info?")
         # if is_confirmed:
-            with open("web_data.json", "w") as data:
-                json.dump(json_data, data, indent=4)
-                web_entry.delete(0, tkinter.END)
-                password_entry.delete(0, tkinter.END)
+        try:
+            with open("web_data.json", "r") as data_file:
+                # Reading JSON data and storing in a variable
+                data = json.load(data_file)
+                # Updating the JSON variable
+                data.update(json_data)
+        except FileNotFoundError as message:
+            with open("web_data.json", "w") as data_file:
+                # Writing the updated JSON variable into the JSON file
+                json.dump(json_data, data_file, indent=4)
+                messagebox.showinfo(title="No JSON file found", message="A new JSON file has been created")
+        else:
+            with open("web_data.json", "w") as data_file:
+                # Writing the updated JSON variable into the JSON file
+                json.dump(data, data_file, indent=4)
+                messagebox.showinfo(title="Success!", message=f"Added login information to the JSON file")
+        finally:
+            web_entry.delete(0, tkinter.END)
+            password_entry.delete(0, tkinter.END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -76,7 +112,7 @@ password_label.grid(column=0, row=3)
 # Entry
 web_entry = tkinter.Entry()
 web_entry.focus()
-web_entry.grid(column=1, row=1, columnspan=2, sticky="ew")
+web_entry.grid(column=1, row=1, sticky="ew")
 
 email_entry = tkinter.Entry()
 email_entry.insert(0,DEFAULT_EMAIL)
@@ -88,6 +124,9 @@ password_entry.grid(column=1, row=3, sticky="ew")
 # Buttons
 generate_pass = tkinter.Button(text="Generate Password", command=random_pass_generate)
 generate_pass.grid(column=2, row=3, sticky="ew")
+
+search_button = tkinter.Button(text="Search", command=search_web_field)
+search_button.grid(column=2, row=1, sticky="ew")
 
 add_button = tkinter.Button(text="Add", command=save_data)
 add_button.grid(column=1, row=4, columnspan=3, sticky="ew")

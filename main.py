@@ -2,6 +2,7 @@ import tkinter
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 DEFAULT_EMAIL = "sample@gmail.com"
 
@@ -33,14 +34,20 @@ def save_data():
     website = web_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    json_data = {
+        website: {
+            "email": email,
+            "password": password
+        }
+    }
 
     if website == "" or password == "":
         messagebox.showerror(title="Empy Fields", message="Please check for empty fields")
     else:
-        is_confirmed = messagebox.askokcancel(title=website, message=f"Email: {email}\nPassword: {password}\n\nAdd these login info?")
-        if is_confirmed:
-            with open("web_data.txt", "a") as data:
-                data.write(f"{website} | {email} | {password}\n")
+        # is_confirmed = messagebox.askokcancel(title=website, message=f"Email: {email}\nPassword: {password}\n\nAdd these login info?")
+        # if is_confirmed:
+            with open("web_data.json", "w") as data:
+                json.dump(json_data, data, indent=4)
                 web_entry.delete(0, tkinter.END)
                 password_entry.delete(0, tkinter.END)
 

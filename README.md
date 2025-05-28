@@ -17,3 +17,5 @@ A password manager using TKInter GUI that can generates randomized password and 
   - sticky
   - columnspan
 - Pyperclip
+- JSON file manipuation
+- Exception Handling
